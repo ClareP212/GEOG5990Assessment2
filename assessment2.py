@@ -22,6 +22,7 @@ Allowing the user to set the number of particles and windspeed-based probabiliti
 
 
 import random
+import bacteriaframework
 #import matplotlib
 
 #open raster rile and read
@@ -53,65 +54,37 @@ x = ground_zero[y].index(255)
 #print(ground_zero[y][x]) 
 height = ground_zero[y][x]
 #print(height)
-
-bacteria = [y,x,height]
+#bacteria = [y,x,height] #' remove when agent based is working
 #print(bacteria)
+location = []
+bacteria_list = []
+num_of_bacteria = 10
 
-#num_of_bacteria = 5000
-
-def gen_function():
-    """
-    Function to keep running the model as long as the stopping conditions are not met.
-    Stopping conditions are:
-    """
-    a = 0
-    global carry_on 
-    while (carry_on) : #keep going as long as carry on = true (there are still sheep) and we still have iterations to go
-        yield a			
-        a = a + 1   
-        
-#############
-carry_on = True
-for i in gen_function():
-    if bacteria[2] >0: #if height is greater than 0
-        #wind direction blow
-        wind_dir = random.random()
-        if wind_dir <= 0.05:
-            bacteria[0] = bacteria[0] - 1
-            #print ("West")
-        elif wind_dir <= 0.15:
-            bacteria[1] = bacteria[1] + 1
-            #print ("North")
-        elif wind_dir <= 0.25:
-            bacteria[1] = bacteria[1] - 1
-            #print ("South")
-        else:
-            bacteria[0] = bacteria[0] + 1
-            #print ("East")  
+for i in range(num_of_bacteria):
+    bacteria_list.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
     
-        #turbulence
-        if bacteria[2] >= 75:
-            turb = random.random()
-            if turb <= 0.2:
-                bacteria[2] = bacteria[2] + 1
-                #print ("Up")
-            elif turb <= 0.3:
-                bacteria[2] = bacteria[2]
-                #print ("Stay")
-            else:
-                bacteria[2] = bacteria[2] - 1     
-                #print ("Down")
-        else:
-            bacteria[2] = bacteria[2] - 1     
-            #print ("Down")        
-    else:
-        print('Bacteria y = ' + str(bacteria[0]))
-        print('Bacteria x = ' + str(bacteria[1]))
-        print('Bacteria height = ' + str(bacteria[2]))
-        carry_on = False
-            
-  
-    
+for i in range(500):
+    for i in range(num_of_bacteria):
+       bacteria_list[i].move()
+   
+#
+#def gen_function():
+#    """
+#    Function to keep running the model as long as the stopping conditions are not met.
+#    Stopping conditions are:
+#    """
+#    a = 0
+#    global carry_on 
+#    while (carry_on) : #keep going as long as carry on = true (there are still sheep) and we still have iterations to go
+#        yield a			
+#        a = a + 1   
+#        
+##############
+#carry_on = True
+#for i in gen_function():
+#       Bacteria.move()
+#        carry_on = False
+#              
     
 #output file
 #blank output list
@@ -123,12 +96,16 @@ for row in range(300):
     output.append(thing)
 #add 1 to every x y with bacteria in it
 
-
-"""
-create txt and populate   ###########NOT WORKING
-
+#create txt and populate   NOT WORKING
 #f = open("output.txt", 'w')
 #for line in open:
 #    f.write(line)
-#f.close()
+#f.close
+"""
+Day 1 - Read in the data, find the cooridnates of bombing point, create random movements NESW and UpDown
+Day 2 - create generator function to run until hits 0, create new module and move in movement functions,
+    get this working with changeable num_of_bacteria var, scrap generator function
+Next Tine:    
+get to append x and y when at height 0, or add 1 to location where height = 0
+
 """
