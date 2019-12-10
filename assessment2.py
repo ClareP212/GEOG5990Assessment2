@@ -21,7 +21,6 @@ Allowing the user to set the number of particles and windspeed-based probabiliti
 """
 
 
-
 import random
 #import matplotlib
 
@@ -31,12 +30,17 @@ ground_zero = []
 for line in f:
     parsed_line = str.split(line,",")
     data_line = []
-    for word in parsed_line:
-        data_line.append(float(word))
+    for value in parsed_line:
+        data_line.append(float(value))
     ground_zero.append(data_line) #append each row as list within environment list
 f.close()
 #display file
 #matplotlib.pyplot.imshow(ground_zero)
+
+#rowno = len(ground_zero)
+#colno = len(ground_zero[0])
+#print(rowno)
+#print(colno)
 
 #find xy of 255
 y=-1
@@ -45,45 +49,68 @@ for row in ground_zero:
     if sum(row) >0:
        break
 x = ground_zero[y].index(255)
+
 #print(ground_zero[y][x]) 
+height = ground_zero[y][x]
+#print(height)
 
-bacteria = [y,x]
-print(bacteria)
+bacteria = [y,x,height]
+#print(bacteria)
 
-#if height is greater than 0
-#wind direction blow
-wind_dir = random.random()
-if wind_dir <= 0.05:
-    bacteria[0] = bacteria[0] - 1
-    print ("West")
-elif wind_dir <= 0.15:
-    bacteria[1] = bacteria[1] + 1
-    print ("North")
-elif wind_dir <= 0.25:
-    bacteria[1] = bacteria[1] - 1
-    print ("South")
-else:
-    bacteria[0] = bacteria[0] + 1
-    print ("East")
+#num_of_bacteria = 5000
 
-
-#height aspect
-#generator function with iterations?
-#does height start at 255?
-
-
-#turbulence
-# if height >= 75:
-turb = random.random()
-if turb <= 0.2:
-    print ("Up")
-elif turb <= 0.3:
-    print ("Stay")
-else:
-    print ("Down")
-#else Down
+def gen_function():
+    """
+    Function to keep running the model as long as the stopping conditions are not met.
+    Stopping conditions are:
+    """
+    a = 0
+    global carry_on 
+    while (carry_on) : #keep going as long as carry on = true (there are still sheep) and we still have iterations to go
+        yield a			
+        a = a + 1   
+        
+#############
+carry_on = True
+for i in gen_function():
+    if bacteria[2] >0: #if height is greater than 0
+        #wind direction blow
+        wind_dir = random.random()
+        if wind_dir <= 0.05:
+            bacteria[0] = bacteria[0] - 1
+            #print ("West")
+        elif wind_dir <= 0.15:
+            bacteria[1] = bacteria[1] + 1
+            #print ("North")
+        elif wind_dir <= 0.25:
+            bacteria[1] = bacteria[1] - 1
+            #print ("South")
+        else:
+            bacteria[0] = bacteria[0] + 1
+            #print ("East")  
     
-    
+        #turbulence
+        if bacteria[2] >= 75:
+            turb = random.random()
+            if turb <= 0.2:
+                bacteria[2] = bacteria[2] + 1
+                #print ("Up")
+            elif turb <= 0.3:
+                bacteria[2] = bacteria[2]
+                #print ("Stay")
+            else:
+                bacteria[2] = bacteria[2] - 1     
+                #print ("Down")
+        else:
+            bacteria[2] = bacteria[2] - 1     
+            #print ("Down")        
+    else:
+        print('Bacteria y = ' + str(bacteria[0]))
+        print('Bacteria x = ' + str(bacteria[1]))
+        print('Bacteria height = ' + str(bacteria[2]))
+        carry_on = False
+            
+  
     
     
 #output file
@@ -96,8 +123,12 @@ for row in range(300):
     output.append(thing)
 #add 1 to every x y with bacteria in it
 
-#create txt and populate NOT WORKING
-f = open("output.txt", 'w')
-for line in open:
-    f.write(line)
-f.close()
+
+"""
+create txt and populate   ###########NOT WORKING
+
+#f = open("output.txt", 'w')
+#for line in open:
+#    f.write(line)
+#f.close()
+"""
