@@ -114,7 +114,10 @@ matplotlib.pyplot.imshow(output)
 Day 1 - Read in the data, find the cooridnates of bombing point, create random movements NESW and UpDown
 Day 2 - create generator function to run until hits 0, create new module and move in movement functions,
     get this working with changeable num_of_bacteria var, scrap generator function
-Next Tine:    
-get to append x and y when at height 0, or add 1 to location where height = 0
+Day 3 - Set up generator function to run iterations for each agent until height 0,
+    wrote something to add one to output in location specified by bacteria_lcoation - needs runnign and checking (at work)
 
+To do:
+get output to produce txt file output.
+GUI and animation
 """
