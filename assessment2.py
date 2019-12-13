@@ -77,8 +77,6 @@ for i in range(num_of_bacteria):
 
 print(bacteria_location)
 
-
-
 def gen_function():
     """
     Function to keep running the model as long as the stopping conditions are not met.
@@ -89,18 +87,21 @@ def gen_function():
     while (carry_on) : #keep going as long as carry on = true (there are still sheep) and we still have iterations to go
         yield a			
         a = a + 1   
-        
-    
-#output file
+
+ #output file
 #blank output list
 output = []
 for row in range(300):
     thing = []
     for i in range (300):
         thing.append(0)
-    output.append(thing)
-#add 1 to every x y with bacteria in it
-
+    output.append(thing)       
+        
+#add 1 to each xy in bacteria location list
+for i in bacteria_location:
+    y = bacteria_location[i][0]
+    x = bacteria_location[i][1]
+    output[y][x] = output[y][x] + 1
 
 #create txt and populate   NOT WORKING
 #f = open("output.txt", 'w')
