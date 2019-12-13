@@ -21,7 +21,6 @@ Allowing the user to set the number of particles and windspeed-based probabiliti
 """
 
 
-import random
 import bacteriaframework
 #import matplotlib
 
@@ -57,34 +56,40 @@ height = ground_zero[y][x]
 #bacteria = [y,x,height] #' remove when agent based is working
 #print(bacteria)
 location = []
-bacteria_list = []
-num_of_bacteria = 10
+bacteria = []
+bacteria_location = []
+num_of_bacteria = 3
 
 for i in range(num_of_bacteria):
-    bacteria_list.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
-    
-for i in range(500):
-    for i in range(num_of_bacteria):
-       bacteria_list[i].move()
-   
-#
-#def gen_function():
-#    """
-#    Function to keep running the model as long as the stopping conditions are not met.
-#    Stopping conditions are:
-#    """
-#    a = 0
-#    global carry_on 
-#    while (carry_on) : #keep going as long as carry on = true (there are still sheep) and we still have iterations to go
-#        yield a			
-#        a = a + 1   
-#        
-##############
-#carry_on = True
-#for i in gen_function():
-#       Bacteria.move()
-#        carry_on = False
-#              
+    bacteria.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
+
+for i in range(num_of_bacteria):
+    carry_on = True
+    for j in gen_function(): 
+        bacteria[i].move()
+        if bacteria[i].height == 0:
+            carry_on = False
+
+#attach final x y locations to bacteria_location
+for i in range(num_of_bacteria):
+    bacteria_location.append([bacteria[i].y,bacteria[i].x])
+    print(bacteria[i].height)
+
+print(bacteria_location)
+
+
+
+def gen_function():
+    """
+    Function to keep running the model as long as the stopping conditions are not met.
+    Stopping conditions are:
+    """
+    a = 0
+    global carry_on 
+    while (carry_on) : #keep going as long as carry on = true (there are still sheep) and we still have iterations to go
+        yield a			
+        a = a + 1   
+        
     
 #output file
 #blank output list
@@ -95,6 +100,7 @@ for row in range(300):
         thing.append(0)
     output.append(thing)
 #add 1 to every x y with bacteria in it
+
 
 #create txt and populate   NOT WORKING
 #f = open("output.txt", 'w')
