@@ -45,10 +45,5 @@ class Bacteria() :
                 else:
                     self.height = self.height - 1     
                     #print ("Down")        
-        else:
-            #print('Bacteria y = ' + str(self.y))
-            #print('Bacteria x = ' + str(self.x))
-            #print('Bacteria height = ' + str(self.height))
-            pass
-            #append x and y to locations list, output?, 
+
             
