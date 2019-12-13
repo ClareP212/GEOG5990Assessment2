@@ -103,6 +103,8 @@ for i in bacteria_location:
     x = bacteria_location[i][1]
     output[y][x] = output[y][x] + 1
 
+matplotlib.pyplot.imshow(output)
+
 #create txt and populate   NOT WORKING
 #f = open("output.txt", 'w')
 #for line in open:
