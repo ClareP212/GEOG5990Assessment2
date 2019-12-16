@@ -22,7 +22,7 @@ Allowing the user to set the number of particles and windspeed-based probabiliti
 
 
 import bacteriaframework
-#import matplotlib
+import matplotlib
 
 #open raster rile and read
 f = open("wind.raster")
@@ -65,7 +65,7 @@ for i in range(num_of_bacteria):
 
 for i in range(num_of_bacteria):
     carry_on = True
-    for j in gen_function(): 
+    for j in gen_function() : 
         bacteria[i].move()
         if bacteria[i].height == 0:
             carry_on = False
