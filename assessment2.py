@@ -23,6 +23,7 @@ Allowing the user to set the number of particles and windspeed-based probabiliti
 
 import bacteriaframework
 import matplotlib
+import tkinter
 
 #open raster rile and read
 f = open("wind.raster")
@@ -103,6 +104,8 @@ for i in range(len(bacteria_location)):
     output[y][x] = output[y][x] + 1
 
 matplotlib.pyplot.imshow(output)
+matplotlib.pyplot.xlim([250,500]) 
+matplotlib.pyplot.ylim([100,200])
 
 #create txt and populate it with values
 f = open("output.txt", 'w')
@@ -114,12 +117,13 @@ for row in output:
     f.write('\n')
 f.close
 
+
 """
 Day 1 - Read in the data, find the cooridnates of bombing point, create random movements NESW and UpDown
 Day 2 - create generator function to run until hits 0, create new module and move in movement functions,
     get this working with changeable num_of_bacteria var, scrap generator function
 Day 3 - Set up generator function to run iterations for each agent until height 0,
-    wrote something to add one to output in location specified by bacteria_lcoation - needs runnign and checking (at work)
+    wrote something to add one to output in location specified by bacteria_location - needs running and checking (at work)
 Day 4 - got generator function working, produced text file of output
 
 To do:
