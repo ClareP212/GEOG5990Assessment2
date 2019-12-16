@@ -63,7 +63,7 @@ num_of_bacteria = 5000
 def gen_function():
     """
     Function to keep running the model as long as the stopping conditions are not met.
-    Stopping conditions are:
+    Stopping condition is if carry_on = true, carry on is trigegred when agent height reaches 0 (ground).
     """
     a = 0
     global carry_on 
@@ -114,9 +114,6 @@ for row in output:
     f.write('\n')
 f.close
 
-
-
-
 """
 Day 1 - Read in the data, find the cooridnates of bombing point, create random movements NESW and UpDown
 Day 2 - create generator function to run until hits 0, create new module and move in movement functions,
@@ -127,4 +124,7 @@ Day 4 - got generator function working, produced text file of output
 
 To do:
 GUI and animation
+Allowing the user to set
+    the number of particles
+    windspeed-based probabilities (for example, using scollbars in Jupyter Notebook).
 """
