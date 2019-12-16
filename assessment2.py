@@ -58,24 +58,7 @@ height = ground_zero[y][x]
 location = []
 bacteria = []
 bacteria_location = []
-num_of_bacteria = 3
-
-for i in range(num_of_bacteria):
-    bacteria.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
-
-for i in range(num_of_bacteria):
-    carry_on = True
-    for j in gen_function() : 
-        bacteria[i].move()
-        if bacteria[i].height == 0:
-            carry_on = False
-
-#attach final x y locations to bacteria_location
-for i in range(num_of_bacteria):
-    bacteria_location.append([bacteria[i].y,bacteria[i].x])
-    print(bacteria[i].height)
-
-print(bacteria_location)
+num_of_bacteria = 5000
 
 def gen_function():
     """
@@ -88,36 +71,60 @@ def gen_function():
         yield a			
         a = a + 1   
 
- #output file
+for i in range(num_of_bacteria):
+    bacteria.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
+
+for i in range(num_of_bacteria):
+    carry_on = True
+    for j in gen_function(): 
+        bacteria[i].move()
+        if bacteria[i].height == 0:
+            carry_on = False
+
+#attach final x y locations to bacteria_location
+for i in range(num_of_bacteria):
+    bacteria_location.append([bacteria[i].y,bacteria[i].x])
+    #print(bacteria[i].height)
+#print(bacteria_location)
+
+#output file
 #blank output list
 output = []
-for row in range(300):
+for row in range(500):
     thing = []
-    for i in range (300):
+    for i in range (500):
         thing.append(0)
     output.append(thing)       
         
 #add 1 to each xy in bacteria location list
-for i in bacteria_location:
+for i in range(len(bacteria_location)):
     y = bacteria_location[i][0]
     x = bacteria_location[i][1]
     output[y][x] = output[y][x] + 1
 
 matplotlib.pyplot.imshow(output)
 
-#create txt and populate   NOT WORKING
-#f = open("output.txt", 'w')
-#for line in open:
-#    f.write(line)
-#f.close
+#create txt and populate it with values
+f = open("output.txt", 'w')
+for row in output:
+    #f.write(str(row))
+    for thing in row:
+        f.write(str(thing))
+        f.write(', ')
+    f.write('\n')
+f.close
+
+
+
+
 """
 Day 1 - Read in the data, find the cooridnates of bombing point, create random movements NESW and UpDown
 Day 2 - create generator function to run until hits 0, create new module and move in movement functions,
     get this working with changeable num_of_bacteria var, scrap generator function
 Day 3 - Set up generator function to run iterations for each agent until height 0,
     wrote something to add one to output in location specified by bacteria_lcoation - needs runnign and checking (at work)
+Day 4 - got generator function working, produced text file of output
 
 To do:
-get output to produce txt file output.
 GUI and animation
 """
