@@ -44,6 +44,7 @@ class Bacteria() :
                         #print ("Down")
                 else:
                     self.height = self.height - 1     
-                    #print ("Down")        
+                    #print ("Down") 
+        #print (self.x & self.y)
 
             
