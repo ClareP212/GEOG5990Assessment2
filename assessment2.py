@@ -36,9 +36,10 @@ for line in f:
     ground_zero.append(data_line) #append each row as list within environment list
 f.close()
 
-#display file
+##Check file has reas, uncomment to display file
 #matplotlib.pyplot.imshow(ground_zero)
 
+##Check row and column numbers of file read in
 #rowno = len(ground_zero)
 #colno = len(ground_zero[0])
 #print(rowno)
@@ -51,7 +52,6 @@ for row in ground_zero:
     if sum(row) >0:
        break
 x = ground_zero[y].index(255)
-
 #print(ground_zero[y][x]) 
 height = ground_zero[y][x]
 #print(height)
@@ -130,11 +130,12 @@ Day 3 - Set up generator function to run iterations for each agent until height 
     wrote something to add one to output in location specified by bacteria_location - needs running and checking (at work)
 Day 4 - got generator function working, produced text file of output
 
-
-
 To do:
 GUI and animation
 Allowing the user to set
     the number of particles
     windspeed-based probabilities (for example, using scollbars in Jupyter Notebook).
+    particle height
+    
+sum to check the total of outputs is equal to the total bacteria input
 """
