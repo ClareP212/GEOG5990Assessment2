@@ -23,7 +23,7 @@ Allowing the user to set the number of particles and windspeed-based probabiliti
 
 import bacteriaframework
 import matplotlib
-import tkinter
+#import tkinter
 
 #open raster rile and read
 f = open("wind.raster")
@@ -35,6 +35,7 @@ for line in f:
         data_line.append(float(value))
     ground_zero.append(data_line) #append each row as list within environment list
 f.close()
+
 #display file
 #matplotlib.pyplot.imshow(ground_zero)
 
@@ -60,6 +61,7 @@ location = []
 bacteria = []
 bacteria_location = []
 num_of_bacteria = 5000
+output = []
 
 def gen_function():
     """
@@ -74,6 +76,8 @@ def gen_function():
 
 for i in range(num_of_bacteria):
     bacteria.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
+#update output file in module?
+
 
 for i in range(num_of_bacteria):
     carry_on = True
@@ -125,6 +129,8 @@ Day 2 - create generator function to run until hits 0, create new module and mov
 Day 3 - Set up generator function to run iterations for each agent until height 0,
     wrote something to add one to output in location specified by bacteria_location - needs running and checking (at work)
 Day 4 - got generator function working, produced text file of output
+
+
 
 To do:
 GUI and animation
