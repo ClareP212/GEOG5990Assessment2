@@ -23,7 +23,9 @@ Allowing the user to set the number of particles and windspeed-based probabiliti
 
 import bacteriaframework
 import matplotlib
-#import tkinter
+matplotlib.use('TkAgg')
+import matplotlib.animation 
+import tkinter
 
 #open raster rile and read
 f = open("wind.raster")
@@ -61,8 +63,25 @@ location = []
 bacteria = []
 bacteria_location = []
 num_of_bacteria = 5000
-output = []
 
+
+
+#def setup
+for i in range(num_of_bacteria):
+    bacteria.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
+    
+####output file####
+#blank output list
+#update output file in module?
+global output
+output = []
+for row in range(500):
+    thing = []
+    for i in range (500):
+        thing.append(0)
+    output.append(thing)   
+        
+        
 def gen_function():
     """
     Function to keep running the model as long as the stopping conditions are not met.
@@ -74,52 +93,96 @@ def gen_function():
         yield a			
         a = a + 1   
 
-for i in range(num_of_bacteria):
-    bacteria.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
-#update output file in module?
+def update(frame_number):
+    global carry_on
+    global bacteria_location
+    for i in range(num_of_bacteria):
+        carry_on = True
+        for j in gen_function(): 
+            bacteria[i].move()
+            if bacteria[i].height == 0:
+                
+                carry_on = False
+    ##plot the output
+    matplotlib.pyplot.imshow(output)
+    #matplotlib.pyplot.xlim([250,500]) 
+    #matplotlib.pyplot.ylim([100,200])
+
+    #attach final x y locations to bacteria_location
+    for i in range(num_of_bacteria):
+        bacteria_location.append([bacteria[i].y,bacteria[i].x])
+        #matplotlib.pyplot.scatter(bacteria[i].x,bacteria[i].y, c='black')
+        #print(bacteria[i].height)
+    #print(bacteria_location)
+         # wolves are black circle
+    #add 1 to each xy in bacteria location list
+    for i in range(len(bacteria_location)):
+        y = bacteria_location[i][0]
+        x = bacteria_location[i][1]
+        output[y][x] = output[y][x] + 1
 
 
-for i in range(num_of_bacteria):
-    carry_on = True
-    for j in gen_function(): 
-        bacteria[i].move()
-        if bacteria[i].height == 0:
-            carry_on = False
+def create_output():
+    #create txt and populate it with values
+    global output
+    f = open("output.txt", 'w')
+    for row in output:
+        #f.write(str(row))
+        for thing in row:
+            f.write(str(thing))
+            f.write(', ')
+        f.write('\n')
+    f.close
 
-#attach final x y locations to bacteria_location
-for i in range(num_of_bacteria):
-    bacteria_location.append([bacteria[i].y,bacteria[i].x])
-    #print(bacteria[i].height)
-#print(bacteria_location)
+###########GUI###########
+#set figure size
+fig = matplotlib.pyplot.figure(figsize=(5, 5)) #change to 7,7 on computer
+ax = fig.add_axes([0, 0, 1, 1])
+ 
+##GUI functions
+def run():
+    """
+    Function to run the model (agent behaviours) and animation       
+    """
+    animation = matplotlib.animation.FuncAnimation(fig, update, repeat=False, frames = 5000)
+    canvas.draw()
+#on stop function call, close the animation window
+def stop():
+    """
+    Function to top the model running and close the model window
+    """
+    root.destroy()
 
-#output file
-#blank output list
-output = []
-for row in range(500):
-    thing = []
-    for i in range (500):
-        thing.append(0)
-    output.append(thing)       
-        
-#add 1 to each xy in bacteria location list
-for i in range(len(bacteria_location)):
-    y = bacteria_location[i][0]
-    x = bacteria_location[i][1]
-    output[y][x] = output[y][x] + 1
+#build main GUI window
+root = tkinter.Tk() # build main window
+root.wm_title("Model") # set title
+canvas = matplotlib.backends.backend_tkagg.FigureCanvasTkAgg(fig, master=root)
+canvas._tkcanvas.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
 
-matplotlib.pyplot.imshow(output)
-matplotlib.pyplot.xlim([250,500]) 
-matplotlib.pyplot.ylim([100,200])
+##GUI slider bars
+#sheepscale = tkinter.Scale(root, label = "Number of Sheep", from_=1, to=100, orient = 'horizontal')
+#sheepscale.pack()
+#wolfscale = tkinter.Scale(root, label = "Number of Wolves", from_=1, to=5, orient = 'horizontal')
+#wolfscale.pack()
 
-#create txt and populate it with values
-f = open("output.txt", 'w')
-for row in output:
-    #f.write(str(row))
-    for thing in row:
-        f.write(str(thing))
-        f.write(', ')
-    f.write('\n')
-f.close
+#GUI menu bar
+menu_bar = tkinter.Menu(root)
+root.config(menu=menu_bar)
+model_menu = tkinter.Menu(menu_bar)
+menu_bar.add_cascade(label="Model", menu=model_menu)
+model_menu.add_command(label="Run model", command=run) 
+model_menu.add_command(label="Stop model", command=stop) 
+
+#GUI buttons
+#confirm_setup = tkinter.Button(root,text="Confirm Setup",fg="red", command=setup)
+#confirm_setup.pack(padx=5, pady=20,side='left')
+run_butt = tkinter.Button(root,text="RUN",fg="red", command=run)
+run_butt.pack(padx=5, pady=10,side='left')
+run_butt = tkinter.Button(root,text="QUIT",fg="red", command=stop)
+run_butt.pack(padx=5, pady=0,side='left')
+
+#keep animation window running
+tkinter.mainloop()
 
 
 """
