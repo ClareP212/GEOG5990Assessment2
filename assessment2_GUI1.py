@@ -26,6 +26,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.animation 
 import tkinter
+import random
 
 #open raster rile and read
 f = open("wind.raster")
@@ -66,22 +67,25 @@ num_of_bacteria = 5000
 
 
 
-#def setup
-for i in range(num_of_bacteria):
-    bacteria.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
+def setup():
+    
+    global east_chance
+    east_chance = eastscale.get() #global variable defining the number of sheep, updated from GUI sheep slider.
+    print ("Chance of going East = " + str(east_chance))
+    global south_chance
+    south_chance = southscale.get() #global variable defining the number of wolves, updated from GUI wolf slider.
+    print ("Chance of going South = " + str(south_chance))  
+    
+    
+    
+    for i in range(num_of_bacteria):
+        bacteria.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
     
 ####output file####
 #blank output list
 #update output file in module?
-global output
-output = []
-for row in range(500):
-    thing = []
-    for i in range (500):
-        thing.append(0)
-    output.append(thing)   
-        
-        
+
+            
 def gen_function():
     """
     Function to keep running the model as long as the stopping conditions are not met.
@@ -93,33 +97,37 @@ def gen_function():
         yield a			
         a = a + 1   
 
-def update(frame_number):
+def update():
     global carry_on
     global bacteria_location
+    
     for i in range(num_of_bacteria):
         carry_on = True
         for j in gen_function(): 
             bacteria[i].move()
             if bacteria[i].height == 0:
-                
                 carry_on = False
-    ##plot the output
-    matplotlib.pyplot.imshow(output)
-    #matplotlib.pyplot.xlim([250,500]) 
-    #matplotlib.pyplot.ylim([100,200])
-
-    #attach final x y locations to bacteria_location
-    for i in range(num_of_bacteria):
+    #attach final x y locations to bacteria_location        
         bacteria_location.append([bacteria[i].y,bacteria[i].x])
-        #matplotlib.pyplot.scatter(bacteria[i].x,bacteria[i].y, c='black')
-        #print(bacteria[i].height)
-    #print(bacteria_location)
-         # wolves are black circle
     #add 1 to each xy in bacteria location list
-    for i in range(len(bacteria_location)):
+    global output
+    output = []
+    for row in range(500):
+        thing = []
+        for i in range (500):
+            thing.append(0)
+        output.append(thing)   # merge w creation
+    
+    for i in range(len(bacteria_location)): #remove and merge
         y = bacteria_location[i][0]
         x = bacteria_location[i][1]
         output[y][x] = output[y][x] + 1
+
+    ##plot the output
+    matplotlib.pyplot.imshow(output)
+    canvas.draw()
+    #matplotlib.pyplot.xlim([250,500]) 
+    #matplotlib.pyplot.ylim([100,200])
 
 
 def create_output():
@@ -135,48 +143,69 @@ def create_output():
     f.close
 
 ###########GUI###########
-#set figure size
-fig = matplotlib.pyplot.figure(figsize=(5, 5)) #change to 7,7 on computer
-ax = fig.add_axes([0, 0, 1, 1])
- 
+    
 ##GUI functions
-def run():
-    """
-    Function to run the model (agent behaviours) and animation       
-    """
-    animation = matplotlib.animation.FuncAnimation(fig, update, repeat=False, frames = 5000)
-    canvas.draw()
-#on stop function call, close the animation window
 def stop():
     """
     Function to top the model running and close the model window
     """
     root.destroy()
+    
+def slider_max(scale):
+    """
+    Function to set the slider scales to max 100
+    """
+#    north_perc = float(northscale.get()) #variable defining the user inputted value, updated from GUI south slider.     
+#    south_perc = float(southscale.get()) #variable defining the user inputted value, updated from GUI south slider.    
+#    east_perc = float(eastscale.get()) #variable defining the user inputted value, updated from GUI east slider.
+#    west_perc = float(westscale.get()) #variable defining the user inputted value, updated from GUI south slider.  
+#    total = north_perc + east_perc + south_perc + west_perc
+#    
+#    x =total % 100
+    what = scale.get()
+    print(what)
+    #self.configure(to=(self.get()+x))
+    
+
+
+        
+def default_slider():
+        eastscale.set(75)     
+        southscale.set(10)   
+        northscale.set(10)   
+        westscale.set(5) 
+        
+#set figure size
+fig = matplotlib.pyplot.figure(figsize=(5, 5)) #change to 7,7 on computer
+ax = fig.add_axes([0, 0, 1, 1])
 
 #build main GUI window
 root = tkinter.Tk() # build main window
 root.wm_title("Model") # set title
 canvas = matplotlib.backends.backend_tkagg.FigureCanvasTkAgg(fig, master=root)
-canvas._tkcanvas.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
+canvas._tkcanvas.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=1)
 
 ##GUI slider bars
-#sheepscale = tkinter.Scale(root, label = "Number of Sheep", from_=1, to=100, orient = 'horizontal')
-#sheepscale.pack()
-#wolfscale = tkinter.Scale(root, label = "Number of Wolves", from_=1, to=5, orient = 'horizontal')
-#wolfscale.pack()
+#wind east dir
+northscale = tkinter.Scale(root, label = "North", from_=0, to=100,command= slider_max(northscale), orient = 'horizontal', length = 200,resolution = 5)
+northscale.pack()
+southscale = tkinter.Scale(root, label = "South", from_=0, to=100, orient = 'horizontal', length = 200,resolution = 5)
+#southscale.set(10)
+southscale.pack()
+eastscale = tkinter.Scale(root, label = "East", from_=0, to=100, orient = 'horizontal', length = 200,resolution = 5)
+#eastscale.set(75)
+eastscale.pack()
+westscale = tkinter.Scale(root, label = "West", from_=0, to=100, orient = 'horizontal', length = 200,resolution = 5)
+#westscale.set(5)
+westscale.pack()
 
-#GUI menu bar
-menu_bar = tkinter.Menu(root)
-root.config(menu=menu_bar)
-model_menu = tkinter.Menu(menu_bar)
-menu_bar.add_cascade(label="Model", menu=model_menu)
-model_menu.add_command(label="Run model", command=run) 
-model_menu.add_command(label="Stop model", command=stop) 
 
 #GUI buttons
-#confirm_setup = tkinter.Button(root,text="Confirm Setup",fg="red", command=setup)
-#confirm_setup.pack(padx=5, pady=20,side='left')
-run_butt = tkinter.Button(root,text="RUN",fg="red", command=run)
+default_slider = tkinter.Button(root,text="Default slider Values", command=default_slider)
+default_slider.pack(padx=5, pady=20,side='left')
+confirm_setup = tkinter.Button(root,text="Confirm Setup",fg="red", command=setup)
+confirm_setup.pack(padx=5, pady=20,side='left')
+run_butt = tkinter.Button(root,text="RUN",fg="red", command=update)
 run_butt.pack(padx=5, pady=10,side='left')
 run_butt = tkinter.Button(root,text="QUIT",fg="red", command=stop)
 run_butt.pack(padx=5, pady=0,side='left')
@@ -192,13 +221,15 @@ Day 2 - create generator function to run until hits 0, create new module and mov
 Day 3 - Set up generator function to run iterations for each agent until height 0,
     wrote something to add one to output in location specified by bacteria_location - needs running and checking (at work)
 Day 4 - got generator function working, produced text file of output
+Day 5 - added anmation, update every bacteria ground but very computationally expensive and takes too long so removed
+Day 6 - fixng the sliders to be max 100 for all 4, usability?? dont like
 
 To do:
 GUI and animation
 Allowing the user to set
     the number of particles
-    windspeed-based probabilities (for example, using scollbars in Jupyter Notebook).
+    windspeed-based probabilities (for example, using scollbars in Jupyter Notebook)., move with max
     particle height
-    
 sum to check the total of outputs is equal to the total bacteria input
+move bacteriaframework to here
 """
