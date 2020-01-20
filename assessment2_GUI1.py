@@ -145,37 +145,7 @@ def create_output():
 ###########GUI###########
     
 ##GUI functions
-def stop():
-    """
-    Function to top the model running and close the model window
-    """
-    root.destroy()
-    
-def slider_max(scale):
-    """
-    Function to set the slider scales to max 100
-    """
-#    north_perc = float(northscale.get()) #variable defining the user inputted value, updated from GUI south slider.     
-#    south_perc = float(southscale.get()) #variable defining the user inputted value, updated from GUI south slider.    
-#    east_perc = float(eastscale.get()) #variable defining the user inputted value, updated from GUI east slider.
-#    west_perc = float(westscale.get()) #variable defining the user inputted value, updated from GUI south slider.  
-#    total = north_perc + east_perc + south_perc + west_perc
-#    
-#    x =total % 100
-    what = scale.get()
-    print(what)
-    #self.configure(to=(self.get()+x))
-    
-
-
-        
-def default_slider():
-        eastscale.set(75)     
-        southscale.set(10)   
-        northscale.set(10)   
-        westscale.set(5) 
-        
-#set figure size
+    #set figure size
 fig = matplotlib.pyplot.figure(figsize=(5, 5)) #change to 7,7 on computer
 ax = fig.add_axes([0, 0, 1, 1])
 
@@ -185,23 +155,64 @@ root.wm_title("Model") # set title
 canvas = matplotlib.backends.backend_tkagg.FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=1)
 
-##GUI slider bars
+def stop():
+    """
+    Function to top the model running and close the model window
+    """
+    root.destroy()
+
+
+
+
+##GUI Sliders
+#slider functions
+def slider_max(value):
+    """
+    Function to set the slider scales to max 100
+    """
+    percs = [float(northscale.get()), float(southscale.get()),float(eastscale.get()),float(westscale.get())]
+    total = sum(percs)
+    slider_max = (value + (100 - total))
+    print("slider max = " + str(slider_max))
+    return slider_max
+
+def north_max(value):
+    northscale.configure(to=(slider_max(value)))
+def south_max(value):
+    southscale.configure(to=(slider_max(value)))
+def east_max(value):
+    eastscale.configure(to=(slider_max(value)))
+def west_max(value):
+    westscale.configure(to=(slider_max(value)))
+        
+def default_slider():
+    eastscale.set(75)     
+    southscale.set(10)   
+    northscale.set(10)   
+    westscale.set(5) 
+def reset_slider():
+    eastscale.set(0)     
+    southscale.set(0)   
+    northscale.set(0)   
+    westscale.set(0)
+        
+
+##slider bars
 #wind east dir
-northscale = tkinter.Scale(root, label = "North", from_=0, to=100,command= slider_max(northscale), orient = 'horizontal', length = 200,resolution = 5)
+northscale = tkinter.Scale(root, label = "North", from_=0,command=lambda _: north_max(northscale.get()), orient = 'horizontal', length = 200,resolution = 5)
 northscale.pack()
-southscale = tkinter.Scale(root, label = "South", from_=0, to=100, orient = 'horizontal', length = 200,resolution = 5)
-#southscale.set(10)
+southscale = tkinter.Scale(root, label = "South", from_=0,command=lambda _: south_max(southscale.get()), orient = 'horizontal', length = 200,resolution = 5)
 southscale.pack()
-eastscale = tkinter.Scale(root, label = "East", from_=0, to=100, orient = 'horizontal', length = 200,resolution = 5)
-#eastscale.set(75)
+eastscale = tkinter.Scale(root, label = "East", from_=0,command=lambda _: east_max(eastscale.get()), orient = 'horizontal', length = 200,resolution = 5)
 eastscale.pack()
-westscale = tkinter.Scale(root, label = "West", from_=0, to=100, orient = 'horizontal', length = 200,resolution = 5)
-#westscale.set(5)
+westscale = tkinter.Scale(root, label = "West", from_=0,command=lambda _: west_max(westscale.get()), orient = 'horizontal', length = 200,resolution = 5)
 westscale.pack()
 
 
 #GUI buttons
 default_slider = tkinter.Button(root,text="Default slider Values", command=default_slider)
+default_slider.pack(padx=5, pady=20,side='left')
+default_slider = tkinter.Button(root,text="Reset slider Values", command=reset_slider)
 default_slider.pack(padx=5, pady=20,side='left')
 confirm_setup = tkinter.Button(root,text="Confirm Setup",fg="red", command=setup)
 confirm_setup.pack(padx=5, pady=20,side='left')
@@ -222,7 +233,8 @@ Day 3 - Set up generator function to run iterations for each agent until height 
     wrote something to add one to output in location specified by bacteria_location - needs running and checking (at work)
 Day 4 - got generator function working, produced text file of output
 Day 5 - added anmation, update every bacteria ground but very computationally expensive and takes too long so removed
-Day 6 - fixng the sliders to be max 100 for all 4, usability?? dont like
+Day 6 - fixng the sliders to be max 100 for all 4, usability?? this is very tricky, attempting to fix
+Day 7 - attempting to fix sliders again, function to set maximum value
 
 To do:
 GUI and animation
