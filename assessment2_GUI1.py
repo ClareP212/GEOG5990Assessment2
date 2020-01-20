@@ -1,27 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Dec  2 17:36:10 2019
-
 @author: gy15cep
-
 Bacterial Bomb
-
-Build a program to do the following...
-
-Pull in the data file and finds out the bombing point.
-Calculates where 5000 bacteria will end up.
-Draws a density map of where all the bacteria end up as an image and displays it on the screen.
-Saves the density map to a file as text.
-
-The basic algorithm is, for each particle, to move the particle up and along in a loop that picks randomly the way it will go.
-When it hits the ground, you make a note of where it hit by incrementing a 2D array by one, and start with the next particle.
-
-Additional marks are awarded for the following.
-Allowing the user to set the number of particles and windspeed-based probabilities (for example, using scollbars in Jupyter Notebook).
 """
-
-
-#import bacteriaframework
+#importing modules
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.animation 
@@ -37,10 +20,9 @@ for line in f:
     data_line = []
     for value in parsed_line:
         data_line.append(float(value))
-    ground_zero.append(data_line) #append each row as list within environment list
+    ground_zero.append(data_line)
 f.close()
-
-##Check file has reas, uncomment to display file
+##To check file has read, uncomment to display file
 #matplotlib.pyplot.imshow(ground_zero)
 
 ##Check row and column numbers of file read in
@@ -49,29 +31,22 @@ f.close()
 #print(rowno)
 #print(colno)
 
-#find xy of 255
+
+#find xy of bomb point - with value of 255
 y=-1
 for row in ground_zero:
     y = y+1
     if sum(row) >0:
        break
 x = ground_zero[y].index(255)
-#print(ground_zero[y][x]) 
 height = ground_zero[y][x]
+#print(ground_zero[y][x]) 
 #print(height)
-#bacteria = [y,x,height] #' remove when agent based is working
-#print(bacteria)
-location = []
-bacteria = []
-bacteria_location = []
-num_of_bacteria = 5000
-
-
 
 def setup():
     """
     Function which defined the wind direction probabilities based on the GUI,
-    initialises bacteria and feeds in the relevant lists and variables to the bacteriaframework module
+    initialises bacteria and feeds in the relevant lists and variables to Bacteria Class
     Returns:
         If sliders sum to 100, returns text showing percentages chosen,
         if less than 100 creates messagebox informing user to ammend sliders
@@ -85,19 +60,25 @@ def setup():
     global west_perc
     west_perc = (westscale.get()/100) #global variable defining west scale value, updated from GUI slider.
     
+
     if 1 == (north_perc + south_perc + east_perc + west_perc):
         print ("Chance of going South = " + str(west_perc*100) + "%")
         print ("Chance of going East = " + str(east_perc*100) + "%")  
         print ("Chance of going South = " + str(south_perc*100) + "%") 
         print ("Chance of going North = " + str(north_perc*100) + "%")
+        
+        global num_of_bacteria
+        num_of_bacteria = 5000
+        global bacteria
+        bacteria = []
         for i in range(num_of_bacteria):
-            bacteria.append(Bacteria(ground_zero,height,location,y,x,north_perc,south_perc,east_perc,west_perc))
+            bacteria.append(Bacteria(ground_zero,height,y,x,north_perc,south_perc,east_perc,west_perc))
     else:
         tkinter.messagebox.showerror("Wind Direction Probabilities","Wind Direction probabilities do not add to 100%, please ammend sliders")
     
 ##Create agents and define their behaviours
 class Bacteria() :
-    def __init__ (self,ground_zero,height,location,y,x,north_perc,south_perc,east_perc,west_perc):
+    def __init__ (self,ground_zero,height,y,x,north_perc,south_perc,east_perc,west_perc):
         """
         Function to initiate the agent 
         Params:
@@ -179,6 +160,7 @@ def gen_function():
 def update():
     global carry_on
     global bacteria_location
+    bacteria_location = []
     
     for i in range(num_of_bacteria):
         carry_on = True
@@ -187,9 +169,11 @@ def update():
             bacteria[i].move()
             if bacteria[i].height == 0:
                 carry_on = False
-    #attach final x y locations to bacteria_location        
-        bacteria_location.append([bacteria[i].y,bacteria[i].x])
+        bacteria_location.append([bacteria[i].y,bacteria[i].x])#attach final x y locations to bacteria_location    
+    
     #add 1 to each xy in bacteria location list
+    global out_of_range
+    out_of_range = 0
     global output
     output = []
     for row in range(500):
@@ -201,14 +185,18 @@ def update():
     for i in range(len(bacteria_location)): #remove and merge
         y = bacteria_location[i][0]
         x = bacteria_location[i][1]
-        output[y][x] = output[y][x] + 1
+        if y > 500 or x > 500:
+            out_of_range = out_of_range + 1
+        else:
+            output[y][x] = output[y][x] + 1
 
     ##plot the output
     matplotlib.pyplot.imshow(output)
+    matplotlib.pyplot.xlim([0,500]) 
+    matplotlib.pyplot.ylim([500,0])
     canvas.draw()
-    #matplotlib.pyplot.xlim([250,500]) 
-    #matplotlib.pyplot.ylim([100,200])
-
+    
+    print(str(out_of_range) + " Bacteria fell outside of study area.")
 
 def create_output():
     #create txt and populate it with values
@@ -241,9 +229,6 @@ def stop():
     Function to top the model running and close the model window
     """
     root.destroy()
-
-
-
 
 ##GUI Sliders
 #slider functions
@@ -339,7 +324,8 @@ Day 4 - got generator function working, produced text file of output
 Day 5 - added anmation, update every bacteria ground but very computationally expensive and takes too long so removed
 Day 6 - fixng the sliders to be max 100 for all 4, usability?? this is very tricky, attempting to fix
 Day 7 - attempting to fix sliders again, function to set maximum value, YAY its working!
-    added messagebox if sliders dont add to 100, integrated module so all in one script
+    added messagebox if sliders dont add to 100, integrated module so all in one script, issues with output file if
+    x and y of bacteria is out of range
 
 To do:
 Allowing the user to set
@@ -351,4 +337,5 @@ make sliders functions more efficient
 change colour of output
 do i need to feed in ground zero to bacteria class?
 add in timer to update?
+set axis to min max x and y
 """
