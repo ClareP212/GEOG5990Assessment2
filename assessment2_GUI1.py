@@ -21,14 +21,15 @@ Allowing the user to set the number of particles and windspeed-based probabiliti
 """
 
 
-import bacteriaframework
+#import bacteriaframework
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.animation 
 import tkinter
+import tkinter.messagebox
 import random
 
-#open raster rile and read
+#open raster file containing bomb location and read
 f = open("wind.raster")
 ground_zero = []
 for line in f:
@@ -68,19 +69,97 @@ num_of_bacteria = 5000
 
 
 def setup():
+    """
+    Function which defined the wind direction probabilities based on the GUI,
+    initialises bacteria and feeds in the relevant lists and variables to the bacteriaframework module
+    Returns:
+        If sliders sum to 100, returns text showing percentages chosen,
+        if less than 100 creates messagebox informing user to ammend sliders
+    """
+    global north_perc
+    north_perc = (northscale.get()/100) #global variable defining north scale value, updated from GUI slider.
+    global south_perc
+    south_perc = (southscale.get()/100) #global variable defining south scale value, updated from GUI slider.
+    global east_perc
+    east_perc = (eastscale.get()/100) #global variable defining east scale value, updated from GUI slider.
+    global west_perc
+    west_perc = (westscale.get()/100) #global variable defining west scale value, updated from GUI slider.
     
-    global east_chance
-    east_chance = eastscale.get() #global variable defining the number of sheep, updated from GUI sheep slider.
-    print ("Chance of going East = " + str(east_chance))
-    global south_chance
-    south_chance = southscale.get() #global variable defining the number of wolves, updated from GUI wolf slider.
-    print ("Chance of going South = " + str(south_chance))  
+    if 1 == (north_perc + south_perc + east_perc + west_perc):
+        print ("Chance of going South = " + str(west_perc*100) + "%")
+        print ("Chance of going East = " + str(east_perc*100) + "%")  
+        print ("Chance of going South = " + str(south_perc*100) + "%") 
+        print ("Chance of going North = " + str(north_perc*100) + "%")
+        for i in range(num_of_bacteria):
+            bacteria.append(Bacteria(ground_zero,height,location,y,x,north_perc,south_perc,east_perc,west_perc))
+    else:
+        tkinter.messagebox.showerror("Wind Direction Probabilities","Wind Direction probabilities do not add to 100%, please ammend sliders")
     
-    
-    
-    for i in range(num_of_bacteria):
-        bacteria.append(bacteriaframework.Bacteria(ground_zero,height,location,y,x))
-    
+##Create agents and define their behaviours
+class Bacteria() :
+    def __init__ (self,ground_zero,height,location,y,x,north_perc,south_perc,east_perc,west_perc):
+        """
+        Function to initiate the agent 
+        Params:
+            ground_zero - 
+            height - wolf class agent list
+            location - sheep class agent list
+            y - y variable from html in model.
+            x - x variable from html in model.
+            north_perc - 
+            south_perc - 
+            east_perc - 
+            west_perc - 
+            
+        """
+        self.ground_zero = ground_zero
+        self.y = y
+        self.x = x
+        self.height = height
+        self.north_perc = north_perc
+        self.south_perc = south_perc
+        self.east_perc = east_perc
+        self.west_perc = west_perc
+        
+    def move(self):
+        if self.height >0: #if height is greater than 0
+                #wind direction blow
+                wind_dir = random.random()
+                if wind_dir <= west_perc:
+                    self.x = self.x - 1
+                    #print ("West")
+                elif wind_dir <= (west_perc + north_perc):
+                    self.y = self.y + 1
+                    #print ("North")
+                elif wind_dir <=(west_perc + north_perc + south_perc):
+                    self.y = self.y - 1
+                    #print ("South")
+                else:
+                    self.x = self.x + 1
+                    #print ("East")  
+            
+                #turbulence
+                if self.height >= 75:
+                    turb = random.random()
+                    if turb <= 0.2:
+                        self.height = self.height + 1
+                        #print ("Up")
+                    elif turb <= 0.3:
+                        self.height = self.height
+                        #print ("Stay")
+                    else:
+                        self.height = self.height - 1     
+                        #print ("Down")
+                else:
+                    self.height = self.height - 1     
+                    #print ("Down") 
+        #print (self.x & self.y)
+#    def check(self):
+#        print (self.north_perc)
+#        print (self.south_perc)
+#        print (self.east_perc)
+#        print (self.west_perc)
+
 ####output file####
 #blank output list
 #update output file in module?
@@ -103,6 +182,7 @@ def update():
     
     for i in range(num_of_bacteria):
         carry_on = True
+        #bacteria[i].check()
         for j in gen_function(): 
             bacteria[i].move()
             if bacteria[i].height == 0:
@@ -142,6 +222,7 @@ def create_output():
         f.write('\n')
     f.close
 
+
 ###########GUI###########
     
 ##GUI functions
@@ -168,21 +249,46 @@ def stop():
 #slider functions
 def slider_max(value):
     """
-    Function to set the slider scales to max 100
+    Determines the maximum value a slider can be, given the current values of all other sliders,
+    before the sum of all slider values is 100 (%)
+    Params:
+        value - value of slider
+    Returns:
+        the maximum the relevant slider can be until the sum of all sliders is 100
     """
     percs = [float(northscale.get()), float(southscale.get()),float(eastscale.get()),float(westscale.get())]
     total = sum(percs)
     slider_max = (value + (100 - total))
-    print("slider max = " + str(slider_max))
+    #print("slider max = " + str(slider_max))
     return slider_max
 
 def north_max(value):
+    """
+    Sets the maximum limit of north slider based on max value determined by slider_max function.
+    Params:
+        value - value of north slider
+    """
     northscale.configure(to=(slider_max(value)))
 def south_max(value):
+    """
+    Sets the maximum limit of south slider based on max value determined by slider_max function.
+    Params:
+        value - value of north slider
+    """
     southscale.configure(to=(slider_max(value)))
 def east_max(value):
+    """
+    Sets the maximum limit of east slider based on max value determined by slider_max function.
+    Params:
+        value - value of east slider
+    """
     eastscale.configure(to=(slider_max(value)))
 def west_max(value):
+    """
+    Sets the maximum limit of west slider based on max value determined by slider_max function.
+    Params:
+        value - value of west slider
+    """
     westscale.configure(to=(slider_max(value)))
         
 def default_slider():
@@ -197,8 +303,7 @@ def reset_slider():
     westscale.set(0)
         
 
-##slider bars
-#wind east dir
+##Create slider bars
 northscale = tkinter.Scale(root, label = "North", from_=0,command=lambda _: north_max(northscale.get()), orient = 'horizontal', length = 200,resolution = 5)
 northscale.pack()
 southscale = tkinter.Scale(root, label = "South", from_=0,command=lambda _: south_max(southscale.get()), orient = 'horizontal', length = 200,resolution = 5)
@@ -207,7 +312,6 @@ eastscale = tkinter.Scale(root, label = "East", from_=0,command=lambda _: east_m
 eastscale.pack()
 westscale = tkinter.Scale(root, label = "West", from_=0,command=lambda _: west_max(westscale.get()), orient = 'horizontal', length = 200,resolution = 5)
 westscale.pack()
-
 
 #GUI buttons
 default_slider = tkinter.Button(root,text="Default slider Values", command=default_slider)
@@ -230,18 +334,21 @@ Day 1 - Read in the data, find the cooridnates of bombing point, create random m
 Day 2 - create generator function to run until hits 0, create new module and move in movement functions,
     get this working with changeable num_of_bacteria var, scrap generator function
 Day 3 - Set up generator function to run iterations for each agent until height 0,
-    wrote something to add one to output in location specified by bacteria_location - needs running and checking (at work)
+    wrote something to add one to output in location specified by bacteria_location
 Day 4 - got generator function working, produced text file of output
 Day 5 - added anmation, update every bacteria ground but very computationally expensive and takes too long so removed
 Day 6 - fixng the sliders to be max 100 for all 4, usability?? this is very tricky, attempting to fix
-Day 7 - attempting to fix sliders again, function to set maximum value
+Day 7 - attempting to fix sliders again, function to set maximum value, YAY its working!
+    added messagebox if sliders dont add to 100, integrated module so all in one script
 
 To do:
-GUI and animation
 Allowing the user to set
     the number of particles
-    windspeed-based probabilities (for example, using scollbars in Jupyter Notebook)., move with max
+    move with max
     particle height
 sum to check the total of outputs is equal to the total bacteria input
-move bacteriaframework to here
+make sliders functions more efficient
+change colour of output
+do i need to feed in ground zero to bacteria class?
+add in timer to update?
 """
