@@ -7,7 +7,6 @@ Bacterial Bomb
 #importing modules
 import matplotlib
 matplotlib.use('TkAgg')
-import matplotlib.animation 
 import tkinter
 import tkinter.messagebox
 import random
@@ -33,12 +32,12 @@ f.close()
 
 
 #find xy of bomb point - with value of 255
-y=-1
+start_y=-1
 for row in ground_zero:
-    y = y+1
+    start_y = start_y+1
     if sum(row) >0:
        break
-x = ground_zero[y].index(255)
+start_x = ground_zero[start_y].index(255)
 #height = ground_zero[y][x]
 #print(ground_zero[y][x]) 
 #print(height)
@@ -78,10 +77,13 @@ def setup():
         global bacteria
         bacteria = []
         for i in range(num_of_bacteria):
-            bacteria.append(Bacteria(height,y,x,north_perc,south_perc,east_perc,west_perc))
+            bacteria.append(Bacteria(height,start_y,start_x,north_perc,south_perc,east_perc,west_perc))
+        run_butt.configure(state='normal',fg = "red")
+        output_butt.configure(state='normal', fg = "black")
     else:
         tkinter.messagebox.showerror("Wind Direction Probabilities","Wind Direction probabilities do not add to 100%, please ammend sliders")
-    
+        run_butt.configure(state='disabled', fg = "grey")
+        output_butt.configure(state='disabled', fg = "grey")
 ##Create agents and define their behaviours
 class Bacteria() :
     def __init__ (self,height,y,x,north_perc,south_perc,east_perc,west_perc):
@@ -185,9 +187,9 @@ def update():
     out_of_range = 0
     global output
     output = []
-    for row in range(500):
+    for row in range(300):
         col = []
-        for i in range (500):
+        for i in range (300):
             col.append(0)
         output.append(col)   # merge w creation
         
@@ -195,16 +197,18 @@ def update():
     for i in range(len(bacteria_location)): #remove and merge
         y = bacteria_location[i][0]
         x = bacteria_location[i][1]
-        if y > 500 or x > 500:
+        if y > 299 or x > 299 or y < 0 or x < 0:
             out_of_range = out_of_range + 1
         else:
             output[y][x] = output[y][x] + 1
+    
 
     ##plot the output
-    matplotlib.pyplot.imshow(output)
-    matplotlib.pyplot.xlim([0,500]) 
-    matplotlib.pyplot.ylim([500,0])
+    matplotlib.pyplot.imshow(output, cmap = 'Greens')
+    matplotlib.pyplot.xlim([0,299]) 
+    matplotlib.pyplot.ylim([299,0])
     canvas.draw()
+
     
     print(str(out_of_range) + " Bacteria fell outside of study area.")
 
@@ -229,12 +233,12 @@ def create_output():
 
 ###########GUI###########
 #set figure size
-fig = matplotlib.pyplot.figure(figsize=(5, 5)) #change to 7,7 on computer
+fig = matplotlib.pyplot.figure(figsize=(7, 7)) #change to 7,7 on computer
 ax = fig.add_axes([0, 0, 1, 1])
 
 #build main GUI window
 root = tkinter.Tk() # build main window
-root.wm_title("Model") # set title
+root.wm_title("Tracking Biological Weapon Fallout") # set title
 canvas = matplotlib.backends.backend_tkagg.FigureCanvasTkAgg(fig, master=root)
 canvas._tkcanvas.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=1)
 
@@ -325,23 +329,22 @@ westscale.pack()
 
 heightscale = tkinter.Scale(root, label = "Height", from_=1, to_=1000, orient = 'horizontal', length = 200)
 heightscale.pack()
-
 bacteriascale = tkinter.Scale(root, label = "Number of Bacteria", from_=1, to_=10000, orient = 'horizontal', length = 200)
 bacteriascale.pack()
 
 #GUI buttons
 default_butt = tkinter.Button(root,text="Default slider Values", command=default_slider)
-default_butt.pack(padx=5, pady=20,side='left')
+default_butt.pack(padx=5, pady=5,side='top')
 reset_butt = tkinter.Button(root,text="Reset slider Values", command=reset_slider)
-reset_butt.pack(padx=5, pady=20,side='left')
+reset_butt.pack(padx=5, pady=5,side='top')
 confirm_setup = tkinter.Button(root,text="Confirm Setup",fg="red", command=setup)
-confirm_setup.pack(padx=5, pady=20,side='left')
+confirm_setup.pack(padx=5, pady=5,side='top')
 run_butt = tkinter.Button(root,text="RUN",fg="red", command=update)
-run_butt.pack(padx=5, pady=10,side='left')
+run_butt.pack(padx=5, pady=5,side='top')
 output_butt = tkinter.Button(root,text="Create Output .txt", command=create_output)
-output_butt.pack(padx=5, pady=10,side='left')
-run_butt = tkinter.Button(root,text="QUIT",fg="red", command=stop)
-run_butt.pack(padx=5, pady=0,side='left')
+output_butt.pack(padx=5, pady=5,side='top')
+quit_butt = tkinter.Button(root,text="QUIT", command=stop)
+quit_butt.pack(padx=5, pady=5,side='top')
 
 
 tkinter.mainloop() # Keep tkinter GUI window running
@@ -360,6 +363,7 @@ Day 6 - fixing the sliders to be max 100 for all 4, usability?? this is tricky, 
 Day 7 - attempting to fix sliders again, trying a function to set maximum value instead of auto-adjust, YAY its working!
     added messagebox if sliders dont add to 100, integrated module so all in one script, tidied things up a bit and added
     some documentation/commenting, added height and bacteria number sliders and integrated to setup
+Day 8 - 
 
 To do:
 refresh button
