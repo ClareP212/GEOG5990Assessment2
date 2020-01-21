@@ -363,14 +363,11 @@ Day 7 - attempting to fix sliders again, trying a function to set maximum value 
 
 To do:
 refresh button
-change colour of output
-do i need to feed in ground zero to bacteria class?
+
 add in timer to update? - time the time taken to process un the update function, print "time taken to model... X secs"
 
-resolution 5?
-
-
 change gui so we can see the axis
+change colour of output
 set axis to min max x and y
 print x and y ranges, max number of bacteria in one place
 
