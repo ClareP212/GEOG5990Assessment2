@@ -79,11 +79,10 @@ def setup():
         for i in range(num_of_bacteria):
             bacteria.append(Bacteria(height,start_y,start_x,north_perc,south_perc,east_perc,west_perc))
         run_butt.configure(state='normal',fg = "red")
-        output_butt.configure(state='normal', fg = "black")
+
     else:
         tkinter.messagebox.showerror("Wind Direction Probabilities","Wind Direction probabilities do not add to 100%, please ammend sliders")
-        run_butt.configure(state='disabled', fg = "grey")
-        output_butt.configure(state='disabled', fg = "grey")
+
 ##Create agents and define their behaviours
 class Bacteria() :
     def __init__ (self,height,y,x,north_perc,south_perc,east_perc,west_perc):
@@ -201,7 +200,8 @@ def update():
             out_of_range = out_of_range + 1
         else:
             output[y][x] = output[y][x] + 1
-    
+            
+    output_butt.configure(state='normal', fg = "black")
 
     ##plot the output
     matplotlib.pyplot.imshow(output, cmap = 'Greens')
@@ -339,9 +339,9 @@ reset_butt = tkinter.Button(root,text="Reset slider Values", command=reset_slide
 reset_butt.pack(padx=5, pady=5,side='top')
 confirm_setup = tkinter.Button(root,text="Confirm Setup",fg="red", command=setup)
 confirm_setup.pack(padx=5, pady=5,side='top')
-run_butt = tkinter.Button(root,text="RUN",fg="red", command=update)
+run_butt = tkinter.Button(root,text="RUN",state='disabled', fg = "grey", command=update)
 run_butt.pack(padx=5, pady=5,side='top')
-output_butt = tkinter.Button(root,text="Create Output .txt", command=create_output)
+output_butt = tkinter.Button(root,text="Create Output .txt",state='disabled', fg = "grey", command=create_output)
 output_butt.pack(padx=5, pady=5,side='top')
 quit_butt = tkinter.Button(root,text="QUIT", command=stop)
 quit_butt.pack(padx=5, pady=5,side='top')
@@ -363,7 +363,9 @@ Day 6 - fixing the sliders to be max 100 for all 4, usability?? this is tricky, 
 Day 7 - attempting to fix sliders again, trying a function to set maximum value instead of auto-adjust, YAY its working!
     added messagebox if sliders dont add to 100, integrated module so all in one script, tidied things up a bit and added
     some documentation/commenting, added height and bacteria number sliders and integrated to setup
-Day 8 - 
+Day 8 - wirintg studd and uml diagram
+
+
 
 To do:
 refresh button
@@ -374,6 +376,8 @@ change gui so we can see the axis
 change colour of output
 set axis to min max x and y
 print x and y ranges, max number of bacteria in one place
+
+add text onto gui
 
 user decide file name
 """
