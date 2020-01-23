@@ -224,7 +224,7 @@ def update():
     canvas.draw()
     print("xmin =" + str((50 - (output_res/2))) + "xmax =" + str((50 + (output_res/2))))   
     print("ymin =" + str((150 - (output_res/2))) + "ymax =" + str((150 + (output_res/2))))   
-    print(str(out_of_range) + " Bacteria fell outside of study area.")   
+    print(str(out_of_range) + " Bacteria fell outside of study area.")
 
 def create_output():
     """
