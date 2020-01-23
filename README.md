@@ -41,7 +41,7 @@ install anaconda (optional)
 
 ### Known Issues
 - sliders occasionally get stuck on 0, need to stop and restart the programme and it will work again.
-- matplot image doesnt alway fit into tkinter canvas completely.
+- matplot image doesnt fit into tkinter canvas completely.
 
 ## Future Development
 - refresh button within the GUI so the user does not have to close GUI and rerun the programme if they want to try new parameters.
