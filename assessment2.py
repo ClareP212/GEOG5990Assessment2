@@ -218,9 +218,10 @@ def update():
     ##plot the output in the GUI
     matplotlib.pyplot.imshow(output, cmap = 'Greens')
     matplotlib.pyplot.xlim([(50 - (output_res/2)),(50 + (output_res/2))]) 
-    matplotlib.pyplot.ylim([(150 + (output_res/2)),(150 - (output_res/2))])
+    matplotlib.pyplot.ylim([(150 - (output_res/2)),(150 + (output_res/2))])
     matplotlib.pyplot.axhline(y=150)
     matplotlib.pyplot.axvline(x=50)
+    matplotlib.pyplot.tight_layout()
     canvas.draw()
     print("xmin =" + str((50 - (output_res/2))) + "xmax =" + str((50 + (output_res/2))))   
     print("ymin =" + str((150 - (output_res/2))) + "ymax =" + str((150 + (output_res/2))))   
@@ -248,12 +249,13 @@ def create_output():
 ###########GUI###########
 #set figure size
 fig = matplotlib.pyplot.figure(figsize=(7, 7), dpi = 100)
-ax = fig.add_axes([0, 0, 1, 1])
+ax = fig.add_axes([0.05, 0.05, 0.9, 0.9])
 
 #build main GUI window
 root = tkinter.Tk() # build main window
 root.wm_title("Tracking Biological Weapon Fallout") # set title
 canvas = matplotlib.backends.backend_tkagg.FigureCanvasTkAgg(fig, master=root)
+
 canvas._tkcanvas.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=1)
 
 def stop():
@@ -345,6 +347,7 @@ heightscale.pack()
 bacteriascale = tkinter.Scale(root, label = "Number of Bacteria", from_=1, to_=10000, orient = 'horizontal', length = 150)
 bacteriascale.pack()
 outputscale = tkinter.Scale(root, label = "Size of output file", from_=300, to_=800, orient = 'horizontal', length = 150, resolution=100)
+outputscale.set(700)
 outputscale.pack()
 
 #GUI buttons
@@ -364,13 +367,3 @@ quit_butt.pack(padx=5, pady=5,side='top')
 
 tkinter.mainloop() # Keep tkinter GUI window running
 
-
-"""
-
-add in timer to update? - time the time taken to process un the update function, print "time taken to model... X secs"
-
-change gui so we can see the axis
-
-set axis to min max x and y
-
-"""
