@@ -4,43 +4,37 @@ Created on Mon Dec  2 17:36:10 2019
 @author: gy15cep
 Bacterial Bomb
 """
-#importing modules
+#importing libraries
 import matplotlib
 matplotlib.use('TkAgg')
 import tkinter
 import tkinter.messagebox
 import random
 
-#open raster file containing bomb location and read
-f = open("wind.raster")
+#open raster file containing bomb location and find the x y coordinated of bomb point
 ground_zero = []
-for line in f:
-    parsed_line = str.split(line,",")
+row_count = -1
+
+f = open("wind.raster") # open file
+for row in f: 
+    row_count = row_count +1
+    parsed_line = str.split(row,",") # split each row at comma
     data_line = []
     for value in parsed_line:
-        data_line.append(float(value))
+        data_line.append(float(value)) # change each value to a float
+    #print(sum(data_line))
+    if sum(data_line) >0: # if the sum of the row is more than 0
+        start_x = data_line.index(255)
+        start_y = row_count
     ground_zero.append(data_line)
 f.close()
-##To check file has read, uncomment to display file
-#matplotlib.pyplot.imshow(ground_zero)
+
+print("Bomb point x = " + str(start_x) + " , y = " + str(start_y))
 
 ##Check row and column numbers of file read in
-#rowno = len(ground_zero)
-#colno = len(ground_zero[0])
-#print(rowno)
-#print(colno)
+#print ("rowno = " + str(len(ground_zero)))
+#print ("colno = " + str(len(ground_zero[0])))
 
-
-#find xy of bomb point - with value of 255
-start_y=-1
-for row in ground_zero:
-    start_y = start_y+1
-    if sum(row) >0:
-       break
-start_x = ground_zero[start_y].index(255)
-#height = ground_zero[y][x]
-#print(ground_zero[y][x]) 
-#print(height)
 
 def setup():
     """
@@ -52,19 +46,19 @@ def setup():
         If sliders sum to less than 100 creates messagebox informing the user to ammend sliders.
     """
     global north_perc
-    north_perc = (northscale.get()/100) #global variable defining north scale value, updated from GUI slider.
+    north_perc = (northscale.get()/100) #global variable of north scale value, from GUI slider.
     global south_perc
-    south_perc = (southscale.get()/100) #global variable defining south scale value, updated from GUI slider.
+    south_perc = (southscale.get()/100) #global variable of south scale value, from GUI slider.
     global east_perc
-    east_perc = (eastscale.get()/100) #global variable defining east scale value, updated from GUI slider.
+    east_perc = (eastscale.get()/100) #global variable of east scale value, from GUI slider.
     global west_perc
-    west_perc = (westscale.get()/100) #global variable defining west scale value, updated from GUI slider.
+    west_perc = (westscale.get()/100) #global variable of west scale value, from GUI slider.
     
     global height
-    height = (heightscale.get()) #global variable defining west scale value, updated from GUI slider.
+    height = (heightscale.get()) #global variable of height scale value, from GUI slider.
     
     global num_of_bacteria
-    num_of_bacteria = (bacteriascale.get()) #global variable defining west scale value, updated from GUI slider.
+    num_of_bacteria = (bacteriascale.get()) #global variable of bacteria number scale value, from GUI slider.
 
     if 1 == (north_perc + south_perc + east_perc + west_perc):
         print ("Chance of going South = " + str(west_perc*100) + "%")
@@ -81,13 +75,13 @@ def setup():
         run_butt.configure(state='normal',fg = "red")
 
     else:
-        tkinter.messagebox.showerror("Wind Direction Probabilities","Wind Direction probabilities do not add to 100%, please ammend sliders")
+        tkinter.messagebox.showerror("Wind Direction Probabilities","Wind direction probabilities do not add to 100%, please ammend sliders")
 
 ##Create agents and define their behaviours
 class Bacteria() :
     def __init__ (self,height,y,x,north_perc,south_perc,east_perc,west_perc):
         """
-        Function to initiate the agent 
+        Function to initiate the bacteria agent, feeds in x, y, height and wind direction proportions from sliders.
         Params:
             height - the initial height the bacteria are starting at, defined by the user via the height slider in the GUI.
             y - y variable defining the y-coordinate of the bacterial bomb start location.
@@ -107,6 +101,19 @@ class Bacteria() :
         self.west_perc = west_perc
         
     def move(self):
+        """
+        Function to move agents according to the wind direction probabilities and turbulance.
+        
+        Params:
+            height - the initial height the bacteria are starting at, defined by the user via the height slider in the GUI.
+            y - y variable defining the y-coordinate of the bacterial bomb start location.
+            x - x variable defining the x-coordinate of the bacterial bomb start location.
+            north_perc - the probability of the bacteria moving northwards in any one movement, defined by the user via the north slider in the GUI. 
+            south_perc - the probability of the bacteria moving southwards in any one movement, defined by the user via the south slider in the GUI.
+            east_perc - the probability of the bacteria moving eastwards in any one movement, defined by the user via the east slider in the GUI.
+            west_perc - the probability of the bacteria moving westwards in any one movement, defined by the user via the west slider in the GUI.
+
+        """
         if self.height >0: #if height is greater than 0
                 #wind direction blow
                 wind_dir = random.random()
@@ -144,7 +151,6 @@ class Bacteria() :
 #        print (self.south_perc)
 #        print (self.east_perc)
 #        print (self.west_perc)
-
 
 def gen_function():
     """
@@ -276,7 +282,7 @@ def south_max(value):
     """
     Sets the maximum limit of south slider based on max value determined by slider_max function.
     Params:
-        value - value of north slider
+        value - value of south slider
     """
     southscale.configure(to=(slider_max(value)))
 def east_max(value):
@@ -316,7 +322,6 @@ def reset_slider():
     heightscale.set(0)
     bacteriascale.set(0)
         
-
 ##Create slider bars
 northscale = tkinter.Scale(root, label = "North", from_=0,command=lambda _: north_max(northscale.get()), orient = 'horizontal', length = 200)
 northscale.pack()
@@ -363,7 +368,7 @@ Day 6 - fixing the sliders to be max 100 for all 4, usability?? this is tricky, 
 Day 7 - attempting to fix sliders again, trying a function to set maximum value instead of auto-adjust, YAY its working!
     added messagebox if sliders dont add to 100, integrated module so all in one script, tidied things up a bit and added
     some documentation/commenting, added height and bacteria number sliders and integrated to setup
-Day 8 - wirintg studd and uml diagram
+Day 8 - writing uml diagram
 
 
 
