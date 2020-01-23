@@ -68,6 +68,9 @@ def setup():
     
     global num_of_bacteria
     num_of_bacteria = (bacteriascale.get()) #global variable of bacteria number scale value, from GUI slider.
+    
+    global output_res
+    output_res = (outputscale.get()) #global variable of bacteria number scale value, from GUI slider.
 
     if 1 == (north_perc + south_perc + east_perc + west_perc):
         print ("Chance of going South = " + str(west_perc*100) + "%")
@@ -76,6 +79,7 @@ def setup():
         print ("Chance of going North = " + str(north_perc*100) + "%")
         print ("Height = " + str(height))
         print ("Number of Bacteria = " + str(num_of_bacteria))
+        print ("Output Size = " + str(output_res) + "x" + str(output_res))
         
         global bacteria
         bacteria = []
@@ -184,9 +188,9 @@ def update():
     #create an empty output array
     global output
     output = []
-    for row in range(300):
+    for row in range(output_res):
         col = []
-        for i in range (300):
+        for i in range (output_res):
             col.append(0)
         output.append(col) 
             
@@ -200,7 +204,7 @@ def update():
         for j in gen_function(): 
             bacteria[i].move() #move according to the wind directions and turbulance chance
             if bacteria[i].height == 0: # when height reaches 0
-                if bacteria[i].y > 299 or bacteria[i].x > 299 or bacteria[i].y < 0 or bacteria[i].x < 0:
+                if bacteria[i].y > (150 + (output_res/2)) or bacteria[i].x > (50 + (output_res/2)) or bacteria[i].y < (150 - (output_res/2)) or bacteria[i].x < (50 - (output_res/2)):
                     #if outside of limits, add one to out_of_range count
                     out_of_range = out_of_range + 1
                 else:
@@ -213,11 +217,14 @@ def update():
     
     ##plot the output in the GUI
     matplotlib.pyplot.imshow(output, cmap = 'Greens')
-    matplotlib.pyplot.xlim([0,299]) 
-    matplotlib.pyplot.ylim([299,0])
+    matplotlib.pyplot.xlim([(50 - (output_res/2)),(50 + (output_res/2))]) 
+    matplotlib.pyplot.ylim([(150 + (output_res/2)),(150 - (output_res/2))])
+    matplotlib.pyplot.axhline(y=150)
+    matplotlib.pyplot.axvline(x=50)
     canvas.draw()
-    
-    print(str(out_of_range) + " Bacteria fell outside of study area.")      
+    print("xmin =" + str((50 - (output_res/2))) + "xmax =" + str((50 + (output_res/2))))   
+    print("ymin =" + str((150 - (output_res/2))) + "ymax =" + str((150 + (output_res/2))))   
+    print(str(out_of_range) + " Bacteria fell outside of study area.")   
 
 def create_output():
     """
@@ -240,7 +247,7 @@ def create_output():
 
 ###########GUI###########
 #set figure size
-fig = matplotlib.pyplot.figure(figsize=(7, 7)) #change to 7,7 on computer
+fig = matplotlib.pyplot.figure(figsize=(7, 7), dpi = 100)
 ax = fig.add_axes([0, 0, 1, 1])
 
 #build main GUI window
@@ -324,19 +331,21 @@ def reset_slider():
     bacteriascale.set(0)
         
 ##Create slider bars
-northscale = tkinter.Scale(root, label = "North", from_=0,command=lambda _: north_max(northscale.get()), orient = 'horizontal', length = 200)
+northscale = tkinter.Scale(root, label = "North", from_=0,command=lambda _: north_max(northscale.get()), orient = 'horizontal', length = 150)
 northscale.pack()
-southscale = tkinter.Scale(root, label = "South", from_=0,command=lambda _: south_max(southscale.get()), orient = 'horizontal', length = 200)
+southscale = tkinter.Scale(root, label = "South", from_=0,command=lambda _: south_max(southscale.get()), orient = 'horizontal', length = 150)
 southscale.pack()
-eastscale = tkinter.Scale(root, label = "East", from_=0,command=lambda _: east_max(eastscale.get()), orient = 'horizontal', length = 200)
+eastscale = tkinter.Scale(root, label = "East", from_=0,command=lambda _: east_max(eastscale.get()), orient = 'horizontal', length = 150)
 eastscale.pack()
-westscale = tkinter.Scale(root, label = "West", from_=0,command=lambda _: west_max(westscale.get()), orient = 'horizontal', length = 200)
+westscale = tkinter.Scale(root, label = "West", from_=0,command=lambda _: west_max(westscale.get()), orient = 'horizontal', length = 150)
 westscale.pack()
 
-heightscale = tkinter.Scale(root, label = "Height", from_=1, to_=1000, orient = 'horizontal', length = 200)
+heightscale = tkinter.Scale(root, label = "Height", from_=1, to_=500, orient = 'horizontal', length = 150)
 heightscale.pack()
-bacteriascale = tkinter.Scale(root, label = "Number of Bacteria", from_=1, to_=10000, orient = 'horizontal', length = 200)
+bacteriascale = tkinter.Scale(root, label = "Number of Bacteria", from_=1, to_=10000, orient = 'horizontal', length = 150)
 bacteriascale.pack()
+outputscale = tkinter.Scale(root, label = "Size of output file", from_=300, to_=800, orient = 'horizontal', length = 150, resolution=100)
+outputscale.pack()
 
 #GUI buttons
 default_butt = tkinter.Button(root,text="Default slider Values", command=default_slider)
@@ -357,11 +366,11 @@ tkinter.mainloop() # Keep tkinter GUI window running
 
 
 """
+
 add in timer to update? - time the time taken to process un the update function, print "time taken to model... X secs"
 
 change gui so we can see the axis
-set axis to min max x and y
-print x and y ranges, max number of bacteria in one place
 
-add text onto gui
+set axis to min max x and y
+
 """
