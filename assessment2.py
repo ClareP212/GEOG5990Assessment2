@@ -2,7 +2,16 @@
 """
 Created on Mon Dec  2 17:36:10 2019
 @author: gy15cep
-Bacterial Bomb
+Student number 200931617
+
+Assesment 2 of GEOG5990: Programming for Geographical Information Analysts: Core Skills
+
+Tracking biological weapon fallout
+
+Note
+If not already enabled in spyder, run the below command in the spyder console to make a pop up window for the GUI
+alternatively, this can be toggled in settings by going into tools>preferences>Ipython console>Graphics and selecting 'tkinter' in the Graphics backend section.
+%matplotlib qt
 """
 #importing libraries
 import matplotlib
@@ -24,8 +33,8 @@ for row in f:
         data_line.append(float(value)) # change each value to a float
     #print(sum(data_line))
     if sum(data_line) >0: # if the sum of the row is more than 0
-        start_x = data_line.index(255)
-        start_y = row_count
+        start_x = data_line.index(255) #note the x value of the 255
+        start_y = row_count # note the y value of the row
     ground_zero.append(data_line)
 f.close()
 
@@ -171,52 +180,44 @@ def update():
     
     Returns:
         Text denoting the number of bacteria which fell outside of the area plotted on the GUI map and output file.
-    """
-    global carry_on
-    global bacteria_location
-    bacteria_location = []
-    
-    #Model bacteria movement until they hit ground (height = 0)
-    for i in range(num_of_bacteria):
-        carry_on = True
-        #bacteria[i].check()
-        for j in gen_function(): 
-            bacteria[i].move()
-            if bacteria[i].height == 0:
-                bacteria_location.append([bacteria[i].y,bacteria[i].x])#attach final x y locations to bacteria_location       
-                carry_on = False
-        
-    
-    #create output array
-    global out_of_range
-    out_of_range = 0
+    """   
+    #create an empty output array
     global output
     output = []
     for row in range(300):
         col = []
         for i in range (300):
             col.append(0)
-        output.append(col)   # merge w creation
-        
-    #add 1 to each xy in bacteria location list    
-    for i in range(len(bacteria_location)): #remove and merge
-        y = bacteria_location[i][0]
-        x = bacteria_location[i][1]
-        if y > 299 or x > 299 or y < 0 or x < 0:
-            out_of_range = out_of_range + 1
-        else:
-            output[y][x] = output[y][x] + 1
+        output.append(col) 
             
+    #Model bacteria movement until they hit ground (height = 0)
+    global carry_on
+    global out_of_range
+    out_of_range = 0
+    for i in range(num_of_bacteria): #for each bacteria
+        carry_on = True
+        #bacteria[i].check()
+        for j in gen_function(): 
+            bacteria[i].move() #move according to the wind directions and turbulance chance
+            if bacteria[i].height == 0: # when height reaches 0
+                if bacteria[i].y > 299 or bacteria[i].x > 299 or bacteria[i].y < 0 or bacteria[i].x < 0:
+                    #if outside of limits, add one to out_of_range count
+                    out_of_range = out_of_range + 1
+                else:
+                    #if not, add one at the coordinate of the output file where the bacteria landed
+                    output[bacteria[i].y][bacteria[i].x] = output[bacteria[i].y][bacteria[i].x] + 1      
+                carry_on = False # stop generator function, move on to next bacteria     
+    
+    #enable the output creation button
     output_butt.configure(state='normal', fg = "black")
-
-    ##plot the output
+    
+    ##plot the output in the GUI
     matplotlib.pyplot.imshow(output, cmap = 'Greens')
     matplotlib.pyplot.xlim([0,299]) 
     matplotlib.pyplot.ylim([299,0])
     canvas.draw()
-
     
-    print(str(out_of_range) + " Bacteria fell outside of study area.")
+    print(str(out_of_range) + " Bacteria fell outside of study area.")      
 
 def create_output():
     """
@@ -356,33 +357,11 @@ tkinter.mainloop() # Keep tkinter GUI window running
 
 
 """
-__Development Log__
-Day 1 - BASICS - Read in the data, find the cooridnates of bombing point, create random movements NESW and UpDown
-Day 2 - BASIC LOOPING - create generator function to run until hits 0, create new module and move in movement functions,
-    get this working with changeable num_of_bacteria var
-Day 3 - Set up generator function to run iterations for each bacteria agent until height 0,
-    wrote something to add one to output in location specified by bacteria_location
-Day 4 - got generator function working, produced text file of output
-Day 5 - added animation, update every bacteria contact with ground but very computationally expensive/takes too long so removed
-Day 6 - fixing the sliders to be max 100 for all 4, usability?? this is tricky, attempting to fix
-Day 7 - attempting to fix sliders again, trying a function to set maximum value instead of auto-adjust, YAY its working!
-    added messagebox if sliders dont add to 100, integrated module so all in one script, tidied things up a bit and added
-    some documentation/commenting, added height and bacteria number sliders and integrated to setup
-Day 8 - writing uml diagram
-
-
-
-To do:
-refresh button
-
 add in timer to update? - time the time taken to process un the update function, print "time taken to model... X secs"
 
 change gui so we can see the axis
-change colour of output
 set axis to min max x and y
 print x and y ranges, max number of bacteria in one place
 
 add text onto gui
-
-user decide file name
 """
