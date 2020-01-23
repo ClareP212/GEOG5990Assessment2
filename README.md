@@ -41,7 +41,6 @@ install anaconda (optional)
 
 ### Known Issues
 - sliders occasionally get stuck on 0, need to stop and restart the programme and it will work again.
-- matplot image doesnt fit into tkinter canvas completely, more can be revealed if the user manually adjusts the window size.
 - smaller heights and larger output sizes result in small bacteria spread on image displayed in GUI
 
 ## Future Development
