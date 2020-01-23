@@ -24,7 +24,7 @@ install anaconda (optional)
  - enter 'python assessment2.py'
  
 ### GUI
-- select bacteria number, release height and the probability of each wind direction (north, south, east and west). The sum of all four wind irections should equal to 100%.
+- select bacteria number, release height, output resolution and the probability of each wind direction (north, south, east and west). The sum of all four wind directions should equal to 100%.
 - press the confirm setup button, if total wind probabilities sums to below 100, a message box will appear asking to ammend the wind sliders.
 - press the RUN button.
 - wait and enjoy!
@@ -41,7 +41,8 @@ install anaconda (optional)
 
 ### Known Issues
 - sliders occasionally get stuck on 0, need to stop and restart the programme and it will work again.
-- matplot image doesnt fit into tkinter canvas completely.
+- matplot image doesnt fit into tkinter canvas completely, more can be revealed if the user manually adjusts the window size.
+- smaller heights and larger output sizes result in small bacteria spread on image displayed in GUI
 
 ## Future Development
 - refresh button within the GUI so the user does not have to close GUI and rerun the programme if they want to try new parameters.
